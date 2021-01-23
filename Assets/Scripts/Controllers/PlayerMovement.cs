@@ -4,26 +4,14 @@ using UnityEngine.UI;
 
 public class PlayerMovement : MonoBehaviour
 {
-    [SerializeField]
-    private Button buttonLeft;
-
-    [SerializeField]
-    private Button buttonRight;
-
-    private float horizontalMovement;
+    private float horizMovement;
     private Rigidbody2D rb;
     private float moveSpeed = 5;
-
-    private bool leftClickDown = false;
-    private bool rightClickDown = false;
 
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
-
-        buttonLeft.GetComponent<Button>().onClick.AddListener(OnButtonLeftClick);
-
-       // HideMouseCursor();
+        HideMouseCursor();
     }
 
     // Update is called once per frame
@@ -34,25 +22,20 @@ public class PlayerMovement : MonoBehaviour
             Application.Quit();
         }
 
-
         // Determine horizontal movement
-        horizontalMovement = Input.GetAxisRaw("Horizontal");
-        if (horizontalMovement == 0)
+        horizMovement = Input.GetAxisRaw("Horizontal");
+        // If no joystick/keyboard movement, check accelerometer
+        if (horizMovement == 0)
         {
-            horizontalMovement = Input.acceleration.x;
+            horizMovement = -Input.acceleration.x;
         }
 
-        Vector2 movement = new Vector2(horizontalMovement, 0);
-        if (movement.x != 0)
+        // Only add force if horizontal movement was detected
+        if (horizMovement != 0)
         {
+            Vector2 movement = new Vector2(horizMovement, 0);
             rb.AddForce(movement * moveSpeed, ForceMode2D.Force);
         }
-    }
-
-    private void OnButtonLeftClick()
-    {
-        Debug.Log("LEFT CLIKC");
-
     }
 
     private void ResetGame()
@@ -64,18 +47,18 @@ public class PlayerMovement : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-
-        Debug.Log("COLLISION");
-
+        // If we collide with the bounding box at bottom of level, reset game
         if (collision.collider.tag.Equals("DeathCollider"))
         {
             ResetGame();
             return;
         }
 
+        // Calculate dot product between direction of contact and player
         ContactPoint2D contact = collision.contacts[0];
         if (Vector2.Dot(contact.normal, rb.transform.up.normalized) > 0.5)
         {
+            // Add manual force to immitate pogo stick
             rb.AddForce(rb.transform.up.normalized * 10, ForceMode2D.Impulse);
         }
     }
