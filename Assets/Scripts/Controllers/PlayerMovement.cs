@@ -37,6 +37,11 @@ public class PlayerMovement : MonoBehaviour
 
         // Determine horizontal movement
         horizontalMovement = Input.GetAxisRaw("Horizontal");
+        if (horizontalMovement == 0)
+        {
+            horizontalMovement = Input.acceleration.x;
+        }
+
         Vector2 movement = new Vector2(horizontalMovement, 0);
         if (movement.x != 0)
         {
