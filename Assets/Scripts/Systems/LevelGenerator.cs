@@ -25,7 +25,7 @@ public class LevelGenerator : MonoBehaviour
         platformPrefab = Resources.Load<GameObject>("Prefabs/Platform");
         bgPrefab = Resources.Load<GameObject>("Prefabs/Background");
 
-        for (int i = 0; i < 10; i++)
+        for (int i = 0; i < 50; i++)
         {
             generateNext();
         }
@@ -42,7 +42,7 @@ public class LevelGenerator : MonoBehaviour
 
     void generateNextPlatform()
     {
-        float nextX = Random.Range(-5, 5);
+        float nextX = Random.Range(-4, 4);
         if (nextX == lastPos.x)
         {
             if (Random.value > 0.5)
@@ -53,7 +53,7 @@ public class LevelGenerator : MonoBehaviour
                 nextX += 1;
             }
         }
-        float nextY = Random.Range(lastPos.y + 3, lastPos.y + 4);
+        float nextY = lastPos.y + 4;
         Vector3 nextPos = new Vector3(nextX, nextY, 0);
         Instantiate(platformPrefab, nextPos, Quaternion.identity);
         lastPos = nextPos;
@@ -67,4 +67,6 @@ public class LevelGenerator : MonoBehaviour
         Instantiate(bgPrefab, nextPos, Quaternion.identity);
         lastBgPos = nextPos;
     }
+
+
 }
